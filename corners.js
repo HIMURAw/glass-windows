@@ -1,10 +1,13 @@
 import Meta from 'gi://Meta';
 
 import {ChamferEffect} from './mask.js';
+import {recolor} from './theme.js';
 
-// Lavender, like the island's frame; brighter on the focused window.
-const FRAME_FOCUSED = [168 / 255, 132 / 255, 1, 0.55];
-const FRAME_IDLE = [168 / 255, 132 / 255, 1, 0.16];
+// Lavender like the island's frame (in the chosen colour theme); brighter on the focused window.
+function frameColor(alpha) {
+    const [r, g, b] = recolor(168, 132, 255);
+    return [r / 255, g / 255, b / 255, alpha];
+}
 
 const TYPES = new Set([
     Meta.WindowType.NORMAL,
@@ -21,10 +24,10 @@ export class Corners {
         this._tracked = new Map();
         this._ids = [
             global.display.connect('window-created', (_d, win) => this._watch(win)),
-            global.display.connect('notify::focus-window', () => this._refreshAll()),
+            global.display.connect('notify::focus-window', () => this.refreshAll()),
         ];
         this._settingIds = [
-            settings.connect('changed::chamfer', () => this._refreshAll()),
+            settings.connect('changed::chamfer', () => this.refreshAll()),
         ];
         for (const actor of global.get_window_actors())
             this._watch(actor.meta_window);
@@ -85,10 +88,10 @@ export class Corners {
         const [w, h] = actor.get_size();
         entry.effect.setShape(w, h, frame.x - buffer.x, frame.y - buffer.y,
             frame.width, frame.height, this._settings.get_int('chamfer'));
-        entry.effect.setFrame(win.has_focus() ? FRAME_FOCUSED : FRAME_IDLE, 1);
+        entry.effect.setFrame(frameColor(win.has_focus() ? 0.55 : 0.16), 1);
     }
 
-    _refreshAll() {
+    refreshAll() {
         for (const win of this._tracked.keys())
             this._refresh(win);
     }

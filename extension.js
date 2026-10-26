@@ -2,10 +2,12 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 import {Corners} from './corners.js';
 import {Snap} from './snap.js';
+import {ThemedStylesheet} from './theme.js';
 
 export default class GlassWindowsExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
+        this._theme = new ThemedStylesheet(this, () => this._corners?.refreshAll());
         this._snap = new Snap(this._settings);
         this._toggleCorners();
         this._cornersId = this._settings.connect('changed::corners', () => this._toggleCorners());
@@ -17,6 +19,8 @@ export default class GlassWindowsExtension extends Extension {
     }
 
     disable() {
+        this._theme.destroy();
+        this._theme = null;
         this._settings.disconnect(this._cornersId);
         this._corners?.destroy();
         this._corners = null;
