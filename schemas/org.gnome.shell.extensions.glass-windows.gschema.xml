@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.glass-windows" path="/org/gnome/shell/extensions/glass-windows/">
+    <key name="corners" type="b">
+      <default>true</default>
+      <summary>Cut window corners at 45 degrees and draw a frame</summary>
+    </key>
+    <key name="chamfer" type="i">
+      <range min="0" max="24"/>
+      <default>7</default>
+      <summary>Corner cut in px</summary>
+    </key>
+    <key name="gap" type="i">
+      <range min="0" max="32"/>
+      <default>6</default>
+      <summary>Gap between snapped windows in px</summary>
+    </key>
+    <key name="snap-assist" type="b">
+      <default>true</default>
+      <summary>Offer other windows for the empty zones after snapping</summary>
+    </key>
+    <key name="snap-layouts" type="as">
+      <default><![CDATA[['<Super>z']]]></default>
+      <summary>Show snap layouts for the focused window</summary>
+    </key>
+  </schema>
+</schemalist>

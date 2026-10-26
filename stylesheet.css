@@ -1,0 +1,58 @@
+/* Same glass as Dynamic Island and Glass Dock: violet-black, lavender frame, cut corners. */
+.gw-picker {
+  background-color: #1b162c;
+  padding: 10px;
+  spacing: 10px;
+  -glass-frame-color: rgba(168, 132, 255, 0.6);
+  -glass-frame-width: 1px;
+}
+
+.gw-card {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.gw-zone {
+  background-color: rgba(255, 255, 255, 0.12);
+  transition-duration: 120ms;
+}
+
+.gw-zone:hover {
+  background-color: #8a70ec;
+}
+
+.gw-preview {
+  background-color: rgba(168, 132, 255, 0.16);
+  -glass-frame-color: rgba(190, 160, 255, 0.85);
+  -glass-frame-width: 1px;
+}
+
+.gw-assist {
+  background-color: rgba(10, 8, 18, 0.28);
+}
+
+.gw-assist-zone {
+  background-color: #1b162c;
+  padding: 16px;
+  -glass-frame-color: rgba(168, 132, 255, 0.6);
+  -glass-frame-width: 1px;
+}
+
+.gw-thumb {
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  transition-duration: 120ms;
+}
+
+.gw-thumb:hover,
+.gw-thumb:focus {
+  background-color: rgba(168, 132, 255, 0.2);
+}
+
+.gw-thumb-box {
+  spacing: 6px;
+}
+
+.gw-thumb-title {
+  color: #eeebf7;
+  font-size: 9pt;
+}

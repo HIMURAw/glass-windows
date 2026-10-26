@@ -1,0 +1,9 @@
+{
+  "uuid": "glass-windows@himuraw",
+  "name": "Glass Windows",
+  "description": "Windows with 45-degree cut corners and a thin frame, plus snapping like Windows 11.\n\nSnap layouts: press Super+Z or drag a window to the top of the screen and drop it on a zone. Snap assist then offers your other windows for the empty zones. Super+arrows snap to halves and quarters. Pairs with Dynamic Island and Glass Dock.",
+  "shell-version": ["50"],
+  "url": "https://github.com/HIMURAw/glass-windows",
+  "settings-schema": "org.gnome.shell.extensions.glass-windows",
+  "version-name": "1.0"
+}
