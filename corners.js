@@ -22,6 +22,7 @@ export class Corners {
     constructor(settings) {
         this._settings = settings;
         this._tracked = new Map();
+        this._pending = new Map(); // window -> 'shown' handler, until it has an actor
         this._ids = [
             global.display.connect('window-created', (_d, win) => this._watch(win)),
             global.display.connect('notify::focus-window', () => this.refreshAll()),
@@ -39,10 +40,16 @@ export class Corners {
         // The actor can come a moment after the window.
         const actor = win.get_compositor_private();
         if (!actor) {
-            const id = win.connect('shown', () => {
-                win.disconnect(id);
-                this._watch(win);
-            });
+            // Tracked so destroy() can drop it: a window first shown after disable() must not
+            // get an effect from a dead instance.
+            if (!this._pending.has(win)) {
+                const id = win.connect('shown', () => {
+                    this._pending.delete(win);
+                    win.disconnect(id);
+                    this._watch(win);
+                });
+                this._pending.set(win, id);
+            }
             return;
         }
         const entry = {actor, effect: null, ids: []};
@@ -55,6 +62,8 @@ export class Corners {
             [win, win.connect('notify::fullscreen', refresh)],
             [win, win.connect('unmanaged', () => this._forget(win))],
             [actor, actor.connect('notify::size', refresh)],
+            // At logout the actor can go before the window is unmanaged.
+            [actor, actor.connect('destroy', () => this._forget(win))],
         );
         refresh();
     }
@@ -100,14 +109,33 @@ export class Corners {
         const entry = this._tracked.get(win);
         if (!entry)
             return;
-        for (const [obj, id] of entry.ids)
-            obj.disconnect(id);
-        if (entry.effect)
-            entry.actor.remove_effect(entry.effect);
         this._tracked.delete(win);
+        // Either end may already be disposed (logout, a closing window): each step on its own.
+        for (const [obj, id] of entry.ids) {
+            try {
+                obj.disconnect(id);
+            } catch {
+                // disposed
+            }
+        }
+        if (entry.effect) {
+            try {
+                entry.actor.remove_effect(entry.effect);
+            } catch {
+                // disposed
+            }
+        }
     }
 
     destroy() {
+        for (const [win, id] of this._pending) {
+            try {
+                win.disconnect(id);
+            } catch {
+                // disposed
+            }
+        }
+        this._pending.clear();
         for (const win of [...this._tracked.keys()])
             this._forget(win);
         this._ids.forEach(id => global.display.disconnect(id));
