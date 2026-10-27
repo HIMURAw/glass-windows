@@ -7,3 +7,7 @@ GNOME Shell 50 extension: windows with 45° cut corners and a thin lavender fram
 - **Super+arrows:** halves and quarters (left → up = top-left quarter), up maximizes, down restores/minimizes.
 
 Install: `./install.sh`, then log out and back in.
+
+## License
+
+GPL-3.0
