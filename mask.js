@@ -1,6 +1,8 @@
 import Clutter from 'gi://Clutter';
 import GObject from 'gi://GObject';
 
+import {currentPalette} from './theme.js';
+
 // GJS turns whole numbers into int GValues, which float uniforms ignore.
 export const asFloat = v => (Number.isInteger(v) ? v + 1e-4 : v);
 
@@ -9,6 +11,7 @@ export const asFloat = v => (Number.isInteger(v) ? v + 1e-4 : v);
 // (x, y, w, h in logical px); outside it pixels pass through untouched, so a window's
 // shadow stays. The offscreen texture can be a little larger than the actor (its paint
 // box rounded out): it is centred on the actor, not stretched over it.
+// In a round colour theme (cam) the corners are rounded instead, `cut` being the radius.
 const SHADER = `
 uniform sampler2D tex;
 uniform float actor_w;
@@ -25,6 +28,7 @@ uniform float frame_r;
 uniform float frame_g;
 uniform float frame_b;
 uniform float frame_a;
+uniform float rounded;
 
 void main(void) {
     vec2 uv = cogl_tex_coord_in[0].xy;
@@ -41,6 +45,10 @@ void main(void) {
     float box = max(d.x, d.y);
     float c = (p.x + p.y - (half_size.x + half_size.y - cut)) * 0.70710678;
     float dist = max(box, c);
+    if (rounded > 0.5) {
+        vec2 q = d + cut;
+        dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - cut;
+    }
     float outer = clamp(0.5 - dist, 0.0, 1.0);
     // Inside the cut corner nothing of the window shows; the shadow there goes too.
     float inner = frame_width > 0.0 ? clamp(0.5 - (dist + frame_width), 0.0, 1.0) : outer;
@@ -65,7 +73,8 @@ class ChamferEffect extends Clutter.ShaderEffect {
     }
 
     // The shape inside the actor; for St widgets this is simply 0, 0, width, height.
-    setShape(actorW, actorH, x, y, w, h, cut) {
+    setShape(actorW, actorH, x, y, w, h, cut, round = false) {
+        this._set('rounded', round ? 1 : 0);
         this._set('actor_w', actorW);
         this._set('actor_h', actorH);
         this._set('rect_x', x);
@@ -95,11 +104,13 @@ class ChamferEffect extends Clutter.ShaderEffect {
 
 // Keeps an St widget cut to the shape at its full size; the frame colour comes from
 // the stylesheet (-glass-frame-color, -glass-frame-width) so hover states can change it.
-export function chamferWidget(actor, cut) {
+// In a round theme the corners are rounded with `radius` (a theme switch restyles the widget).
+export function chamferWidget(actor, cut, radius = cut) {
     const effect = new ChamferEffect();
     const update = () => {
         const [w, h] = actor.get_size();
-        effect.setShape(w, h, 0, 0, w, h, cut);
+        const round = Boolean(currentPalette().round);
+        effect.setShape(w, h, 0, 0, w, h, round ? Math.min(radius, w / 2, h / 2) : cut, round);
         const node = actor.get_theme_node?.();
         if (!node)
             return;

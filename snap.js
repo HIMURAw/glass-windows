@@ -34,6 +34,9 @@ const MOVES = {
 
 const CARD_W = 92;
 const CUT = 7;
+// Round themes (cam): panels 22px, the preview 14px, as the Cam Panel's cards and rows.
+const PANEL_RADIUS = 22;
+const PREVIEW_RADIUS = 14;
 // The drop strip opens when a dragged window's pointer comes this close to the top.
 const TOP_BAND = 14;
 
@@ -86,7 +89,7 @@ class Picker {
             });
             this.actor.add_child(card);
         });
-        chamferWidget(this.actor, CUT);
+        chamferWidget(this.actor, CUT, PANEL_RADIUS);
     }
 
     // For drags, where the pointer is grabbed and hover never fires.
@@ -116,7 +119,7 @@ export class Snap {
         this._tiles = new WeakMap();
 
         this._preview = new St.Widget({style_class: 'gw-preview', visible: false, opacity: 0});
-        chamferWidget(this._preview, CUT);
+        chamferWidget(this._preview, CUT, PREVIEW_RADIUS);
         Main.layoutManager.uiGroup.add_child(this._preview);
 
         Main.wm.addKeybinding('snap-layouts', settings, Meta.KeyBindingFlags.NONE,
@@ -389,7 +392,7 @@ export class Snap {
             layout_manager: new Clutter.BinLayout(),
         });
         panel.connect('button-press-event', () => Clutter.EVENT_STOP);
-        chamferWidget(panel, CUT);
+        chamferWidget(panel, CUT, PANEL_RADIUS);
         const scroll = new St.ScrollView({x_expand: true, y_expand: true});
         const flow = new St.Widget({
             layout_manager: new Clutter.FlowLayout({column_spacing: 10, row_spacing: 10, homogeneous: true}),

@@ -1,10 +1,15 @@
 import Meta from 'gi://Meta';
 
 import {ChamferEffect} from './mask.js';
-import {recolor} from './theme.js';
+import {currentPalette, recolor} from './theme.js';
 
 // Lavender like the island's frame (in the chosen colour theme); brighter on the focused window.
+// Round themes (cam): a white hairline, rounded corners of this radius instead of the cut.
+const ROUND_RADIUS = 12;
+
 function frameColor(alpha) {
+    if (currentPalette().round)
+        return [1, 1, 1, alpha * 0.5];
     const [r, g, b] = recolor(168, 132, 255);
     return [r / 255, g / 255, b / 255, alpha];
 }
@@ -95,8 +100,9 @@ export class Corners {
         const frame = win.get_frame_rect();
         const buffer = win.get_buffer_rect();
         const [w, h] = actor.get_size();
+        const round = Boolean(currentPalette().round);
         entry.effect.setShape(w, h, frame.x - buffer.x, frame.y - buffer.y,
-            frame.width, frame.height, this._settings.get_int('chamfer'));
+            frame.width, frame.height, round ? ROUND_RADIUS : this._settings.get_int('chamfer'), round);
         entry.effect.setFrame(frameColor(win.has_focus() ? 0.55 : 0.16), 1);
     }
 

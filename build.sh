@@ -14,6 +14,6 @@ pack)
     extra=()
     for js in *.js; do [[ "$js" == extension.js || "$js" == eslint.config.js ]] || extra+=(--extra-source="$js"); done
     gnome-extensions pack --force --schema=schemas/org.gnome.shell.extensions.glass-windows.gschema.xml \
-        --extra-source=LICENSE "${extra[@]}" .
+        --extra-source=LICENSE --extra-source=themes "${extra[@]}" .
     ;;
 esac

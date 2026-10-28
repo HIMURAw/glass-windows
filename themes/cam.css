@@ -1,0 +1,43 @@
+/* cam: the Cam Panel look. Appended (not recoloured) to the stylesheet when the colour theme is
+   cam; mask.js rounds the corners for it. There is no blur here, so the panels take the Cam
+   Panel's solid fallback (#1a1730 at .92) with a white hairline; zones fill with the accent. */
+
+.gw-picker,
+.gw-assist-zone {
+  background-color: rgba(26, 23, 48, 0.92);
+  -glass-frame-color: rgba(255, 255, 255, 0.17);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.gw-card {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.gw-zone {
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.gw-zone:hover {
+  background-color: #8fb4ff;
+}
+
+.gw-preview {
+  background-color: rgba(143, 180, 255, 0.16);
+  -glass-frame-color: rgba(143, 180, 255, 0.85);
+}
+
+.gw-thumb {
+  border-radius: 14px;
+}
+
+.gw-thumb:hover,
+.gw-thumb:focus {
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.gw-thumb-title {
+  color: #f4f1ff;
+}
